@@ -31,11 +31,11 @@ public class Gela {
         irakaslea.start();
         
         //hari nagusiak itxaron dezala ikasleei agur batzuk botatzeko astia emateko
-        try {
+/*        try {
             Thread.sleep(7000);
         } catch (Exception e) {
         }
-
+*/
         synchronized (monitore) {
             monitore.notify();  //nahiko balu, synchronized ataletik aurrerago exekuzioarekin jarraitu halako luke: ez da amaitu haria!
         }

@@ -31,7 +31,7 @@ public class Gela {
         
         //hari nagusiak itxaron dezala ikasleei agur batzuk botatzeko astia emateko
         try {
-            Thread.sleep(7000);
+            Thread.sleep(3000);
         } catch (Exception e) {
         }
 
@@ -50,5 +50,18 @@ public class Gela {
             }
         }   
         System.out.println("Klasea hasteko prest dago.");
+
+        // Ikasle guztiak bukatu dutela ziurtatu
+		for (int i=0; i<ikasleak.size(); i++)
+		{
+			if (ikasleak.get(i).isAlive())
+			{
+				try {
+					ikasleak.get(i).join();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
     }
 }
