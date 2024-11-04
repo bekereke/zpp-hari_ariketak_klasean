@@ -10,6 +10,7 @@ public class Produktorea extends Thread {
 		this.n= n;
 	}
 	
+	@Override
 	public void run()
 	{
 		for (int i=0; i<5; i++)
