@@ -58,7 +58,7 @@ public class MilioiBatura {
         public void run() {
             long partziala = lortuPartzialak(hasi,buka);   
             System.out.println(izena + "hariak: " + partziala);
-            batuPartzialak(partziala);  //(batzuetan, float jarriz gero) Milioi batura: 5.00000227E11 eta beste batzuetan Milioi batura: 5.0000026E11
+            batuPartzialak(partziala);  
         }
     }
 }
