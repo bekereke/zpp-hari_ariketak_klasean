@@ -38,8 +38,8 @@ public class MilioiBatura {
         return bat;
     }
 
-    //private static synchronized void batuPartzialak(long part) {
-    private static void batuPartzialak(long part) {   //EZ DAGO LASTERKETA BALDINTZARIK 
+    private static synchronized void batuPartzialak(long part) {
+    //private static void batuPartzialak(long part) {   
         guztira += part;
     }
 

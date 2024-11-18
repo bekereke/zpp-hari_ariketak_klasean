@@ -4,8 +4,7 @@ import java.util.concurrent.Semaphore;
 
 public class MilioiBaturaSem {
     
-    //private static long guztira = 0L;  
-    private static Emaitza emaitza = new Emaitza();  //BALIABIDE PARTEKATUA: LASTERKETA BALDINTZA! 
+    private static long guztira = 0L;  // int mota jarriz gero overflow!
     private static Semaphore semaforoa = new Semaphore(1);  //MUTEX
 
     public static void main(String[] args) {
@@ -17,7 +16,7 @@ public class MilioiBaturaSem {
         for (int i = 0; i < hariak.length; i++) {
             int nondik = i * banaketaBakoitzari; //0 (0haria)
             int nora = (i + 1) * banaketaBakoitzari - 1; //254.999 (0haria)
-            hariak[i] = new Thread(new BaturaHaria(i, nondik, nora, emaitza));
+            hariak[i] = new Thread(new BaturaHaria(i, nondik, nora));
             System.out.println(i + "hariak " + nondik + "(e)tik " + nora + "(e)raino.");
             hariak[i].start();
         }
@@ -30,60 +29,45 @@ public class MilioiBaturaSem {
             }
         }
         long end = System.currentTimeMillis();
-        System.out.println("Milioi batura: " + emaitza.get());
+        System.out.println("Milioi batura: " + guztira);
         System.out.println("Time-elapsed in mm: "+(end-start));
     }
 
     private static long lortuPartzialak(int hasi, int buka) {
         long bat = 0L;
         for (int i = hasi; i <= buka; i++) {
-            bat += (long)i;
+            bat += (float)i;
         }
         return bat;
+    }
+
+    private static void batuPartzialak(long part) {
+        try {
+            semaforoa.acquire();
+            guztira += part;
+        } catch (InterruptedException ie) {
+            ie.printStackTrace();
+        } finally {
+            semaforoa.release();
+        }
     }
 
     static class BaturaHaria implements Runnable {
         private final int hasi;
         private final int buka;
         private String izena;
-        private Emaitza emaitza;
 
-        public BaturaHaria(int i, int hasi, int buka, Emaitza emaitza) {
+        public BaturaHaria(int i, int hasi, int buka) {
             this.izena = Integer.toString(i);
             this.hasi = hasi;
             this.buka = buka;
-            this.emaitza = emaitza;
         }
 
         @Override
         public void run() {
             long partziala = lortuPartzialak(hasi,buka);   
             System.out.println(izena + "hariak: " + partziala);
-            emaitza.set(partziala);
-        }
-    }
-
-    static class Emaitza{
-        private long emaitza;
-
-        public Emaitza(){
-            emaitza = 0L;
-        }
-
-        public long set(long partziala){
-            try {
-                semaforoa.acquire();
-                emaitza += partziala;
-            } catch (InterruptedException ie) {
-                ie.printStackTrace();
-            } finally {
-                semaforoa.release();
-            }
-            return emaitza;
-        }
-
-        public long get(){
-            return emaitza;
+            batuPartzialak(partziala);  //(batzuetan, float jarriz gero) Milioi batura: 5.00000227E11 eta beste batzuetan Milioi batura: 5.0000026E11
         }
     }
 }
