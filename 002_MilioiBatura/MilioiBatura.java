@@ -1,11 +1,8 @@
 package unieibar;
 
-import java.util.concurrent.Semaphore;
+public class MilioiBatura {
 
-public class MilioiBaturaSem {
-    
     private static long guztira = 0L;  // int mota jarriz gero overflow!
-    private static Semaphore semaforoa = new Semaphore(1);  //MUTEX
 
     public static void main(String[] args) {
 
@@ -15,7 +12,7 @@ public class MilioiBaturaSem {
 
         for (int i = 0; i < hariak.length; i++) {
             int nondik = i * banaketaBakoitzari; //0 (0haria)
-            int nora = (i + 1) * banaketaBakoitzari - 1; //254.999 (0haria)
+            int nora = (i + 1) * banaketaBakoitzari - 1; //244.999 (0haria)
             hariak[i] = new Thread(new BaturaHaria(i, nondik, nora));
             System.out.println(i + "hariak " + nondik + "(e)tik " + nora + "(e)raino.");
             hariak[i].start();
@@ -36,20 +33,14 @@ public class MilioiBaturaSem {
     private static long lortuPartzialak(int hasi, int buka) {
         long bat = 0L;
         for (int i = hasi; i <= buka; i++) {
-            bat += (float)i;
+            bat += (long)i;
         }
         return bat;
     }
 
-    private static void batuPartzialak(long part) {
-        try {
-            semaforoa.acquire();
-            guztira += part;
-        } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        } finally {
-            semaforoa.release();
-        }
+    //private static synchronized void batuPartzialak(long part) {
+    private static void batuPartzialak(long part) {   //EZ DAGO LASTERKETA BALDINTZARIK 
+        guztira += part;
     }
 
     static class BaturaHaria implements Runnable {
